@@ -11,8 +11,11 @@ int main(int argc, char* argv[]) {
 	try {
 
 		IckyAsm::execute(ird, "sample.icky");
-		int s = IckyAsm::runtimeSize(ird);
-		cout << "Runtime size: " << s << endl;
+		//int s = IckyAsm::runtimeSize(ird);
+		//cout << "Runtime size: " << s << endl;
+		//cout << "Running compiled program\n";
+
+		IckyAsm::run(ird);
 	
 	} catch(IckyException* ie) {
 		cout << *ie << endl;

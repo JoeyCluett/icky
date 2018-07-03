@@ -10,7 +10,7 @@
 int IckyAsm::put::_string(IckyRuntimeData* ird, std::string name, std::string value) {
 	// dont put the same data in twice
 	if(ird->_std_var_string_index.find(name) 
-			== ird->_std_var_string_index.end())
+			!= ird->_std_var_string_index.end())
 		throw new IckyException("IckyAsm::put::_string() attempting to repeat data in runtime...");
 
 	// this is important part
@@ -27,7 +27,7 @@ int IckyAsm::put::_string(IckyRuntimeData* ird, std::string name, std::string va
 
 int IckyAsm::put::_double(IckyRuntimeData* ird, std::string name, double value) {
 	if(ird->_std_var_double_index.find(name) 
-			== ird->_std_var_double_index.end())
+			!= ird->_std_var_double_index.end())
 		throw new IckyException("IckyAsm::put::_double() attempting to repeat data in runtime...");
 
 	int index = ird->_std_var_double.size();
@@ -38,7 +38,7 @@ int IckyAsm::put::_double(IckyRuntimeData* ird, std::string name, double value) 
 
 int IckyAsm::put::_integer(IckyRuntimeData* ird, std::string name, long value) {
 	if(ird->_std_var_integer_index.find(name) 
-			== ird->_std_var_integer_index.end())
+			!= ird->_std_var_integer_index.end())
 		throw new IckyException("IckyAsm::put::_integer() attempting to repeat data in runtime...");
 
 	int index = ird->_std_var_integer.size();

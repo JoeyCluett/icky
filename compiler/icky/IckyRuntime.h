@@ -20,9 +20,10 @@ public:
 };
 
 namespace IckyOpCode {
-	const uint8_t printString  = 0; // <0> <4-byte index into string table>
-	const uint8_t printDouble  = 1; // <1> <4-byte index into double table>
-	const uint8_t printInteger = 2; // <2> <4-byte index into integer table>
+	const uint8_t printString    = 0; // <0> <4-byte index into string table>
+	const uint8_t printDouble    = 1; // <1> <4-byte index into double table>
+	const uint8_t printInteger   = 2; // <2> <4-byte index into integer table>
+	const uint8_t printCharacter = 3; // <3> <single character to print out>
 } // end of namespace IckyOpCode
 
 /*

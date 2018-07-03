@@ -19,6 +19,11 @@ namespace IckyAsm {
 	void execute(IckyRuntimeData* ird, std::string filename);
 
 	/*
+		Execute assembled opcodes
+	*/
+	void run(IckyRuntimeData* ird);
+
+	/*
 		Disassemble the asm output in the IckyRuntimeData _prog vector
 	*/
 	void dasm(IckyRuntimeData* ird);
@@ -59,10 +64,11 @@ namespace IckyAsm {
 	/*
 		Print assembler functions, generate op codes (0, 1, 2) <integer index>
 	*/
-	void printString(IckyRuntimeData* ird,  std::string name); // <0x00>
-	void printDouble(IckyRuntimeData* ird,  std::string name); // <0x01>
-	void printInteger(IckyRuntimeData* ird, std::string name); // <0x02>
-	void printStringLiteral(IckyRuntimeData* ird, std::string value); // <0x03>
+	void printString(IckyRuntimeData* ird,  std::string name);        // <0x00>
+	void printDouble(IckyRuntimeData* ird,  std::string name);        // <0x01>
+	void printInteger(IckyRuntimeData* ird, std::string name);        // <0x02>
+	void printStringLiteral(IckyRuntimeData* ird, std::string value); // <0x00> string is put in the runtime when this function is called
+	void printCharacterLiteral(IckyRuntimeData* ird, char c);         // <0x03>
 
 } // end of namespace Icky
 
