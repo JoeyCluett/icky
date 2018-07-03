@@ -47,3 +47,8 @@ void IckyAsm::printStringLiteral(IckyRuntimeData* ird, std::string value) {
 	
 	ird->_instruction_size++;
 }
+
+void IckyAsm::printCharacterLiteral(IckyRuntimeData* ird, char c) {
+	ird->_asm_ops.push_back(IckyOpCode::printCharacter);
+	ird->_asm_ops.push_back(c);
+}

@@ -40,6 +40,10 @@ struct IckyRuntimeData {
 	std::map<std::string, int> _std_var_string_index;
 	std::map<std::string, int> _std_var_integer_index;
 
+	// index tables for GOTOs, BRANCHes, CALLs
+	std::vector<int> _jump_table; // this is checked after compilation run, to verify all entries have been filled
+	std::map<std::string, int> _jump_table_index;
+
 	// byte codes are placed here prior to being executed
 	std::vector<uint8_t> _asm_ops;
 	int _instruction_ptr = 0;

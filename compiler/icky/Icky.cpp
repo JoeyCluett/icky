@@ -41,7 +41,17 @@ void IckyAsm::execute(IckyRuntimeData* ird, std::string filename) {
 				if(str == IckyKeyword::END || str == ";") {
 					current_state = STATE_default;
 				} else {
-					IckyAsm::printStringLiteral(ird, str);
+					if(str == "\\n") {
+						IckyAsm::printCharacterLiteral(ird, '\n');
+					} else if(str == "\\s") {
+						IckyAsm::printCharacterLiteral(ird, ' ');
+					} else {
+						if(str[0] == '$') {
+							IckyAsm::printDouble(ird, &str[1]);
+						} else {
+							IckyAsm::printStringLiteral(ird, str);
+						}
+					}
 				}
 				break;
 
@@ -92,5 +102,11 @@ void IckyAsm::run(IckyRuntimeData* ird) {
 				throw new IckyException(std::string("Unknown opcode: ") + std::to_string((int)opcode));
 				break;
 		}
+	}
+}
+
+void IckyAsm::dasm(IckyRuntimeData* ird) {
+	for(uint8_t ui : ird->_asm_ops) {
+		
 	}
 }
