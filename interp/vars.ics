@@ -1,0 +1,36 @@
+>> e = -2 ;
+< $e \n ;
+:= $e = $e ^ 0.5 ;
+< $e \n ;
+< Press any key to continue... \n ;
+-w ;
+
+<p 2 ;
+-e ;
+>c roots
+< Root of 2 is @0 \n ;
+
+< Press any key to continue... \n ;
+-w ;
+
+// STRINGS ARE ACTUALLY USEFUL
+// single string
+> %mystring ;
+< mystring = %mystring ;
+
+// string til next newline
+>> %mystring ;
+
+-q ;
+
+:: roots
+	>> tmp = @0 ;
+	:= $tmp = $tmp ^ 0.5 ;
+	>p 1 ;
+	<p $tmp ;	
+>r ;
+
+VARIABLE e = -2 END
+PRINT $e \n END
+MATH $e = $e + $e END
+

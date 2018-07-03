@@ -1,0 +1,26 @@
+// ==============================================
+// HERE BE DRAGONS
+// ==============================================
+
+<p 2 ; 
+>c m 
+< @0 \n ; 
+-q ;
+
+LABEL m
+	>> tmp = 0 ;
+	:= $tmp = @0 * @0 * @0 ;
+	>p 1 ; 
+	<p $tmp ; 
+RETURN ;
+
+LABEL add_stack_values
+
+	// -e ;
+
+	>> tmp = 0 ;
+	:= $tmp = @0 + @1 - @2 + @3 + @4 / @5 ; // add 6 stack values
+	POP 6 ; // clean up the stack before returning
+	PUSH $tmp ;
+
+RETURN ;

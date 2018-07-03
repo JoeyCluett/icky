@@ -1,0 +1,25 @@
+// new way of doing things in IcScript
+// IcScript retains backwards compatibility
+
+>> i = -5 ;
+
+>> k = 13 ;
+PRINT Hello World \n $k ;
+:= $k = $k + $__pi / 2 - 13.5 ;
+EXPOSE ;
+
+:= $k = $k - $i ;
+EXPOSE ;
+
+$large_variable
+
+// multiple commands
+>> jk = 0 ; 
+:= $jk = $__pi ;
+EXPOSE ;
+
+// infinite loop going nowhere
+//LABEL __go_here
+//EXPOSE ;
+//	PRINT $k \n ;
+//GOTO __go_here

@@ -1,0 +1,11 @@
+VARIABLE i EQU 0 END
+
+LABEL start
+
+	MATH $i = $i + 1 END
+	PRINT $i \n END
+	WAIT END
+
+BRANCH start IF $i < 10 END
+
+RUNTIME END

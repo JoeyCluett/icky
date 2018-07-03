@@ -1,0 +1,31 @@
+// nested loop in IcScript
+
+VARIABLE o EQU 0 END
+LABEL out
+
+	VARIABLE i EQU 0 END
+	LABEL in
+
+		VARIABLE kl EQU 0 END
+		MATH $kl = $o * $i END
+		PRINT $kl \n END
+
+		MATH $i = $i + 1 END
+	BRANCH in IF $i < 3 END
+
+	// EXPOSE END
+
+	MATH $o = $o + 1 END
+BRANCH out IF $o < 3 END
+
+EXPOSE END
+PRINT Press button to continue ... \n END 
+WAIT END
+
+// clear some space
+PRINT \n \n \n \n ;
+
+LABEL end
+	MATH $o = $o + 1 END
+	PRINT $o \n END
+GOTO end

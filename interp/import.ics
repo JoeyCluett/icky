@@ -1,0 +1,12 @@
+PRINT Hello World from IcScript $__pi END
+WAIT END
+
+IMPORT helloworld hw END
+
+EXPOSE END
+
+CALL {hw}sayhello // imported functions are named differently when they are imported
+CALL {hw}saybye
+CALL {hw}printc
+
+QUIT END

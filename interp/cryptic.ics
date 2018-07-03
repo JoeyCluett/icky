@@ -1,0 +1,31 @@
+// nested loop in IcScript
+
+>> o = 0 ;
+:: out
+
+	>> i = 0 ;
+	:: in
+
+		>> kl = 0 ;
+		:= $kl = $o * $i ;
+		< $kl \n ;
+
+		:= $i = $i + 1 ;
+	. in : $i < 3 ;
+
+	// -e ;
+
+	:= $o = $o + 1 ;
+. out : $o < 3 ;
+
+-e ; 
+< Press button to continue ... \n ; 
+-w ;
+
+// clear some space
+< \n \n \n \n ;
+
+:: end
+	:= $o = $o + 1 ;
+	< $o \n ;
+.. end
