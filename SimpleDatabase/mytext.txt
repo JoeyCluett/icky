@@ -1,9 +1,0 @@
-      this is text in the sim     ple database file
-
-   multiple       lines in th     is        file // this is a comment
-
-        a lone       forward slash: / /        / / / n// 5 forward slashes
-
-     more      text
-
- -     Joey
