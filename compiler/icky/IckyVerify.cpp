@@ -40,3 +40,13 @@ int IckyAsm::verify::_integer(IckyRuntimeData* ird, std::string name) {
 		return ird->_std_var_integer_index[name];
 	}
 }
+
+int IckyAsm::verify::_jumpDest(IckyRuntimeData* ird, std::string name) {
+	if(ird->_jump_table_index.find(name) == ird->_jump_table_index.end()) {
+		std::string except = "Jump destination [";
+		except = except + name + "] does not exist in jump index table";
+		throw new IckyException(except);
+	} else {
+		return ird->_jump_table_index[name];
+	}
+}

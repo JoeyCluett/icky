@@ -52,3 +52,7 @@ void IckyAsm::printCharacterLiteral(IckyRuntimeData* ird, char c) {
 	ird->_asm_ops.push_back(IckyOpCode::printCharacter);
 	ird->_asm_ops.push_back(c);
 }
+
+void IckyAsm::unconditionalJump(IckyRuntimeData* ird, std::string dest) {
+	int jump_index = 
+}

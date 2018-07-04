@@ -1,1 +1,4 @@
-< Hello World $__pi \n \n \n ; // PRINT Hello World END
+< Hello \s \s \s World $__pi \n \n \n ; // PRINT Hello World END
+
+:: top
+	< LOOP FOREVER \n ;

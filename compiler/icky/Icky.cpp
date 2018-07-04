@@ -18,6 +18,8 @@ void IckyAsm::execute(IckyRuntimeData* ird, std::string filename) {
 
 	const int STATE_default = 0;
 	const int STATE_print   = 1;
+	const int STATE_label   = 2;
+	const int STATE_goto    = 3;
 	int current_state = STATE_default;
 
 	int str_vec_size = str_vec->size();
@@ -33,11 +35,18 @@ void IckyAsm::execute(IckyRuntimeData* ird, std::string filename) {
 				//std::cout << "STATE_default\n";
 				if(str == IckyKeyword::PRINT || str == "<") {
 					current_state = STATE_print;
+
+				} else if(str == IckyKeyword::LABEL || str == "::") { // no END/;
+					current_state = STATE_label;
+
+				} else if(str == IckyKeyword::GOTO || str == "..") { // no END/;
+					current_state = STATE_goto;
+
 				}
 				break;
 
 			case STATE_print:
-				//std::cout << "STATE_print\n";
+				std::cout << "STATE_print\n";
 				if(str == IckyKeyword::END || str == ";") {
 					current_state = STATE_default;
 				} else {
@@ -52,6 +61,33 @@ void IckyAsm::execute(IckyRuntimeData* ird, std::string filename) {
 							IckyAsm::printStringLiteral(ird, str);
 						}
 					}
+				}
+				break;
+
+			case STATE_label:
+				std::cout << "STATE_label\n";
+				if(ird->_jump_table_index.find(str) == ird->_jump_table_index.end()) {
+					// entry doesnt exist. create it
+					int asm_index = ird->_asm_ops.size();
+					ird->_jump_table_index[str] = ird->_jump_table.size();
+					ird->_jump_table.push_back(asm_index);
+				} else {
+					// entry exists but it doesnt have a valid jump destination
+					ird->_jump_table.at(ird->_jump_table_index[str]) = ird->_asm_ops.size();
+				}
+				current_state = STATE_default;
+				break;
+
+			case STATE_goto:
+				std::cout << "STATE_goto\n";
+				if(ird->_jump_table_index.find(str) == ird->_jump_table_index.end()) {
+					// entry doesnt exist. create a placeholder until a LABEL is encoutered
+					ird->_jump_table_index[str] = ird->_jump_table.size();
+					ird->_jump_table.push_back(-1);
+					IckyAsm::unconditionalJump(ird, str);
+				} else {
+					// entry already exists. congrats
+					IckyAsm::unconditionalJump(ird, str);
 				}
 				break;
 
@@ -105,8 +141,10 @@ void IckyAsm::run(IckyRuntimeData* ird) {
 	}
 }
 
+/*
 void IckyAsm::dasm(IckyRuntimeData* ird) {
 	for(uint8_t ui : ird->_asm_ops) {
 		
 	}
 }
+*/

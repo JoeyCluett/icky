@@ -14,12 +14,17 @@
 namespace IckyAsm {
 
 	/*
-		Assembles opcode program and then executes it
+		Executes a precompiled bytecode program
 	*/
 	void execute(IckyRuntimeData* ird, std::string filename);
 
 	/*
-		Execute assembled opcodes
+		Compiles the given program into a bytecode program
+	*/
+	void compile(IckyRuntimeData* ird, std::string filename);
+
+	/*
+		calls the two functions (compile(), execute()) above
 	*/
 	void run(IckyRuntimeData* ird);
 
@@ -59,6 +64,7 @@ namespace IckyAsm {
 		int _string(IckyRuntimeData* ird, std::string name);
 		int _integer(IckyRuntimeData* ird, std::string name);
 		int _double(IckyRuntimeData* ird, std::string name);
+		int _jumpDest(IckyRuntimeData* ird, std::string name);
 	} // end of namespace verify
 
 	/*
@@ -69,6 +75,7 @@ namespace IckyAsm {
 	void printInteger(IckyRuntimeData* ird, std::string name);        // <0x02>
 	void printStringLiteral(IckyRuntimeData* ird, std::string value); // <0x00> string is put in the runtime when this function is called
 	void printCharacterLiteral(IckyRuntimeData* ird, char c);         // <0x03>
+	void unconditionalJump(IckyRuntimeData* ird, std::string dest);   // <0x04>
 
 } // end of namespace Icky
 

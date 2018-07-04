@@ -113,10 +113,10 @@ int main(int argc, char* argv[]) {
 				} else if(str == MATH || str == ":=") {
 					current_state = STATE_math;
 
-				} else if(str == LABEL || str == "::") {
+				} else if(str == LABEL || str == "::") { // no END/;
 					current_state = STATE_label;
 
-				} else if(str == GOTO || str == "..") {
+				} else if(str == GOTO || str == "..") { // no END/;
 					current_state = STATE_goto;
 
 				} else if(str == BRANCH || str == ".") {
@@ -131,7 +131,7 @@ int main(int argc, char* argv[]) {
 				} else if(str == RUNTIME || str == "-r") {
 					current_state = STATE_runtime;
 
-				} else if(str == CALL || str == ">c") {
+				} else if(str == CALL || str == ">c") { // no END/;
 					current_state = STATE_call;
 
 				} else if(str == RETURN || str == ">r") {

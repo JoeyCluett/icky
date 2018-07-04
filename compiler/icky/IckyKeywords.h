@@ -19,7 +19,6 @@ namespace IckyKeyword {
 	const std::string RETURN   = "RETURN";   // return to saved address
 	const std::string PUSH     = "PUSH";     // push onto data stack
 	const std::string POP      = "POP";      // pop from data stack
-	const std::string CLEAR    = "CLEAR";    // delete a variable from the runtime
 	const std::string IMPORT   = "IMPORT";   // import a file containing one or more C/C++ functions
 
 	const std::string IF       = "IF";   // : self-explanatory
