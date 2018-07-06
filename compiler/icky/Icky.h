@@ -16,7 +16,7 @@ namespace IckyAsm {
 	/*
 		Executes a precompiled bytecode program
 	*/
-	void execute(IckyRuntimeData* ird, std::string filename);
+	void execute(IckyRuntimeData* ird);
 
 	/*
 		Compiles the given program into a bytecode program
@@ -26,10 +26,10 @@ namespace IckyAsm {
 	/*
 		calls the two functions (compile(), execute()) above
 	*/
-	void run(IckyRuntimeData* ird);
+	void run(IckyRuntimeData* ird, std::string filename);
 
 	/*
-		Disassemble the asm output in the IckyRuntimeData _prog vector
+		Disassemble the binary output in the IckyRuntimeData _asm_opcode vector
 	*/
 	void dasm(IckyRuntimeData* ird);
 

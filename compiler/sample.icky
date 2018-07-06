@@ -2,3 +2,5 @@
 
 :: top
 	< LOOP FOREVER \n ;
+GOTO top
+

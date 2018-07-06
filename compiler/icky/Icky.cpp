@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 
-void IckyAsm::execute(IckyRuntimeData* ird, std::string filename) {
+void IckyAsm::compile(IckyRuntimeData* ird, std::string filename) {
 
 	// some default values go into the runtime always
 	IckyAsm::put::_double(ird, "__pi",    3.14159265);
@@ -89,6 +89,7 @@ void IckyAsm::execute(IckyRuntimeData* ird, std::string filename) {
 					// entry already exists. congrats
 					IckyAsm::unconditionalJump(ird, str);
 				}
+				current_state = STATE_default;
 				break;
 
 			default:
@@ -110,12 +111,12 @@ int IckyAsm::runtimeSize(IckyRuntimeData* ird) {
 	return s; // not finished yet, but who cares
 }
 
-void IckyAsm::run(IckyRuntimeData* ird) {
+void IckyAsm::execute(IckyRuntimeData* ird) {
 	int& IP = ird->_instruction_ptr; // just a shorter way to use
 
 	for(;;) {
 		//uint8_t opcode = ird->_asm_ops[IP]; // avoid the bounds check for a lil speed boost
-		uint8_t opcode = ird->_asm_ops.at(IP);
+		uint8_t opcode = ird->_asm_ops.at(IP); // however, bounds checking ensures safer execution
 
 		switch(opcode) {
 			case IckyOpCode::printString:
@@ -133,6 +134,9 @@ void IckyAsm::run(IckyRuntimeData* ird) {
 			case IckyOpCode::printCharacter:
 				std::cout << (char)ird->_asm_ops[++IP];
 				IP++;
+				break;
+			case IckyOpCode::unconditionalJump:
+				IP = ird->_jump_table[*(int*)&ird->_asm_ops[++IP]];
 				break;
 			default:
 				throw new IckyException(std::string("Unknown opcode: ") + std::to_string((int)opcode));
