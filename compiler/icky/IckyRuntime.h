@@ -25,13 +25,23 @@ namespace IckyOpCode {
 	const uint8_t printInteger      = 2; // <2> <4-byte index into integer table>
 	const uint8_t printCharacter    = 3; // <3> <single character to print out>
 	const uint8_t unconditionalJump = 4; // <4> <4-byte index into jump table>
+	const uint8_t loadDoubleVar     = 5; // <5> <4-byte src> <4-byte dest>
+
 } // end of namespace IckyOpCode
+
+union LargeRegister {
+	long i;
+	double f;
+};
 
 /*
 	This struct is responsible for holding all data 
 	associated with a given instance of an IckyVM
 */
 struct IckyRuntimeData {
+	// useful for the compiler. nothing more
+	bool verbose = false;
+
 	// variable raw data storage
 	std::vector<double> _std_var_double;
 	std::vector<long>   _std_var_integer;
@@ -44,6 +54,10 @@ struct IckyRuntimeData {
 	// index tables for GOTOs, BRANCHes, CALLs, LABELs
 	std::vector<int> _jump_table; // this is checked after compilation run, to verify all entries have been filled
 	std::map<std::string, int> _jump_table_index;
+
+	// storage for immediate operands
+	LargeRegister aReg;
+	LargeRegister bReg;
 
 	// byte codes are placed here prior to being executed
 	std::vector<uint8_t> _asm_ops;

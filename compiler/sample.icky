@@ -1,6 +1,5 @@
-< Hello \s \s \s World $__pi \n \n \n ; // PRINT Hello World END
+>> NEW_VARIABLE = $__pi ;
+< VARIABLE: $NEW_VARIABLE \n ;
 
-:: top
-	< LOOP FOREVER \n ;
-GOTO top
-
+// !> NEW_INT_VAR = 0 ;
+// < NEW_INT_VAR !NEW_INT_VAR \n ;

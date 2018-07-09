@@ -16,11 +16,18 @@ void IckyAsm::compile(IckyRuntimeData* ird, std::string filename) {
 	std::cout << "Filename: " << filename << std::endl;
 	auto* str_vec = SimpleDatabase::alignStringVector(filename);
 
-	const int STATE_default = 0;
-	const int STATE_print   = 1;
-	const int STATE_label   = 2;
-	const int STATE_goto    = 3;
+	const int STATE_default  = 0;
+	const int STATE_print    = 1;
+	const int STATE_label    = 2;
+	const int STATE_goto     = 3;
+	const int STATE_variable = 4;
 	int current_state = STATE_default;
+
+	const int VARIABLE_var_name = 0;
+	const int VARIABLE_equ      = 1;
+	const int VARIABLE_value    = 2;
+	const int VARIABLE_end      = 3;
+	int current_variable_state = VARIABLE_var_name;
 
 	int str_vec_size = str_vec->size();
 	for(int k = 0; k < str_vec_size; k++) {
@@ -32,7 +39,7 @@ void IckyAsm::compile(IckyRuntimeData* ird, std::string filename) {
 		// the main compilation loop
 		switch(current_state) {
 			case STATE_default:
-				//std::cout << "STATE_default\n";
+				if(ird->verbose) std::cout << "STATE_default\n";
 				if(str == IckyKeyword::PRINT || str == "<") {
 					current_state = STATE_print;
 
@@ -42,11 +49,13 @@ void IckyAsm::compile(IckyRuntimeData* ird, std::string filename) {
 				} else if(str == IckyKeyword::GOTO || str == "..") { // no END/;
 					current_state = STATE_goto;
 
+				} else if(str == IckyKeyword::VARIABLE || str == ">>") { // >> varname = value ;
+					current_state = STATE_variable;
 				}
 				break;
 
 			case STATE_print:
-				std::cout << "STATE_print\n";
+				if(ird->verbose) std::cout << "STATE_print\n";
 				if(str == IckyKeyword::END || str == ";") {
 					current_state = STATE_default;
 				} else {
@@ -65,7 +74,7 @@ void IckyAsm::compile(IckyRuntimeData* ird, std::string filename) {
 				break;
 
 			case STATE_label:
-				std::cout << "STATE_label\n";
+				if(ird->verbose) std::cout << "STATE_label\n";
 				if(ird->_jump_table_index.find(str) == ird->_jump_table_index.end()) {
 					// entry doesnt exist. create it
 					int asm_index = ird->_asm_ops.size();
@@ -79,7 +88,7 @@ void IckyAsm::compile(IckyRuntimeData* ird, std::string filename) {
 				break;
 
 			case STATE_goto:
-				std::cout << "STATE_goto\n";
+				if(ird->verbose) std::cout << "STATE_goto\n";
 				if(ird->_jump_table_index.find(str) == ird->_jump_table_index.end()) {
 					// entry doesnt exist. create a placeholder until a LABEL is encoutered
 					ird->_jump_table_index[str] = ird->_jump_table.size();
@@ -92,11 +101,72 @@ void IckyAsm::compile(IckyRuntimeData* ird, std::string filename) {
 				current_state = STATE_default;
 				break;
 
+			case STATE_variable:
+				if(ird->verbose) std::cout << "STATE_variable\n";
+				static std::string var_name  = "";
+				static std::string var_value = "";
+
+				// go through all the steps of acquiring variable initialization data
+				switch(current_variable_state) {
+					case VARIABLE_var_name:
+						var_name = str;
+						current_variable_state = VARIABLE_equ;
+						break;
+					case VARIABLE_equ:
+						if(str != IckyKeyword::EQU && str != "=")
+							throw new IckyException("Unexpected token, expecting 'EQU' or '='");
+						else
+							current_variable_state = VARIABLE_value;
+						break;
+					case VARIABLE_value:
+						var_value = str;
+						current_variable_state = VARIABLE_end;
+						break;
+					case VARIABLE_end:
+						if(str != IckyKeyword::END && str != ";")
+							throw new IckyException("Unexpected token, expecting 'END' or ';'");
+						else {
+							int data_index = -1;
+							if(var_value[0] == '$') {
+								// source is another variable
+								data_index = IckyAsm::verify::_double(ird, &var_value[1]);
+							} else {
+								// assume source is double literal
+								data_index = IckyAsm::put::_double(ird, std::stod(var_value));
+							}
+
+							if(ird->_std_var_double_index.find(var_name) 
+									!= ird->_std_var_double_index.end()) {
+								// variable has already been declared, throw error
+								throw new IckyException("Variable has already been declared!");
+							} else {
+								// variable doesnt exist, create one
+								ird->_std_var_double_index[var_name] = ird->_std_var_double.size();
+								ird->_std_var_double.push_back(0.0);
+
+								// generate appropiate instruction
+								IckyAsm::loadDoubleFromLiteral(ird, var_name, data_index);
+							}
+						}
+						current_state = STATE_default;
+						current_variable_state = VARIABLE_var_name;
+						break;
+					default:
+						throw new IckyException("Unknown substate in STATE_variable");
+						return;
+				}
+				break;
+
+			
+
 			default:
 				throw new IckyException("Unknown STATE_ in compilation stage of IckyAsm::execute");
 				break;
 		}
 	}
+
+	// verify IckyRuntimeData to verify all variables have been initialized
+
 }
 
 int IckyAsm::runtimeSize(IckyRuntimeData* ird) {
@@ -115,7 +185,7 @@ void IckyAsm::execute(IckyRuntimeData* ird) {
 	int& IP = ird->_instruction_ptr; // just a shorter way to use
 
 	for(;;) {
-		//uint8_t opcode = ird->_asm_ops[IP]; // avoid the bounds check for a lil speed boost
+		////uint8_t opcode = ird->_asm_ops[IP]; // avoid the bounds check for a lil speed boost
 		uint8_t opcode = ird->_asm_ops.at(IP); // however, bounds checking ensures safer execution
 
 		switch(opcode) {
@@ -137,6 +207,11 @@ void IckyAsm::execute(IckyRuntimeData* ird) {
 				break;
 			case IckyOpCode::unconditionalJump:
 				IP = ird->_jump_table[*(int*)&ird->_asm_ops[++IP]];
+				break;
+			case IckyOpCode::loadDoubleVar:
+				ird->_std_var_double[*(int*)&ird->_asm_ops[IP + 1]] 
+						= ird->_std_var_double[*(int*)&ird->_asm_ops[IP + 5]];
+				IP += 9;
 				break;
 			default:
 				throw new IckyException(std::string("Unknown opcode: ") + std::to_string((int)opcode));

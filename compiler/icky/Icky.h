@@ -76,6 +76,7 @@ namespace IckyAsm {
 	void printStringLiteral(IckyRuntimeData* ird, std::string value); // <0x00> string is put in the runtime when this function is called
 	void printCharacterLiteral(IckyRuntimeData* ird, char c);         // <0x03>
 	void unconditionalJump(IckyRuntimeData* ird, std::string dest);   // <0x04>
+	void loadDoubleFromLiteral(IckyRuntimeData* ird, std::string dest, int src); // <5>
 
 } // end of namespace Icky
 
