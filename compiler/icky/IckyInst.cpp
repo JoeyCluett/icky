@@ -70,6 +70,56 @@ void IckyAsm::loadDoubleFromLiteral(IckyRuntimeData* ird, std::string dest, int 
 		ird->_asm_ops.push_back((dest_index >> (8*i)) & 0xFF);
 	for(int i = 0; i < 4; i++)
 		ird->_asm_ops.push_back((src >> (8*i)) & 0xFF);
-		
+
+	ird->_instruction_size++;
+}
+
+void IckyAsm::wsLoadDouble(IckyRuntimeData* ird, int src) {
+	ird->_asm_ops.push_back(IckyOpCode::wsPushDouble);
+	for(int i = 0; i < 4; i++)
+		ird->_asm_ops.push_back((src >> (8*i)) & 0xFF);
+	ird->_instruction_size++;
+}
+
+void IckyAsm::wsReverse(IckyRuntimeData* ird) {
+	ird->_asm_ops.push_back(IckyOpCode::wsReverse);
+	ird->_instruction_size++;
+}
+
+void IckyAsm::wsClear(IckyRuntimeData* ird) {
+	ird->_asm_ops.push_back(IckyOpCode::wsClear);
+	ird->_instruction_size++;
+}
+
+void IckyAsm::wsSaveDouble(IckyRuntimeData* ird, std::string dest) {
+	int dest_index = IckyAsm::verify::_double(ird, dest);
+	ird->_asm_ops.push_back(IckyOpCode::wsSaveDouble);
+	for(int i = 0; i < 4; i++)
+		ird->_asm_ops.push_back((dest_index >> (8*i)) & 0xFF);
+	ird->_instruction_size++;
+}
+
+void IckyAsm::wsAdd(IckyRuntimeData* ird) {
+	ird->_asm_ops.push_back(IckyOpCode::wsAdd);
+	ird->_instruction_size++;
+}
+
+void IckyAsm::wsSubtract(IckyRuntimeData* ird) {
+	ird->_asm_ops.push_back(IckyOpCode::wsSubtract);
+	ird->_instruction_size++;
+}
+
+void IckyAsm::wsMultiply(IckyRuntimeData* ird) {
+	ird->_asm_ops.push_back(IckyOpCode::wsMultiply);
+	ird->_instruction_size++;
+}
+
+void IckyAsm::wsDivide(IckyRuntimeData* ird) {
+	ird->_asm_ops.push_back(IckyOpCode::wsDivide);
+	ird->_instruction_size++;
+}
+
+void IckyAsm::wsPower(IckyRuntimeData* ird) {
+	ird->_asm_ops.push_back(IckyOpCode::wsPower);
 	ird->_instruction_size++;
 }

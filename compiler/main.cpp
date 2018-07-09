@@ -14,6 +14,7 @@ int main(int argc, char* argv[]) {
 
 		IckyAsm::compile(ird, "sample.icky");
 		cout << "Instruction size: " << ird->_instruction_size << endl;
+		cout << "Binary size:      " << ird->_asm_ops.size() << " bytes" << endl;
 		//int s = IckyAsm::runtimeSize(ird);
 		//cout << "Runtime size: " << s << endl;
 		//cout << "Running compiled program\n";
@@ -23,6 +24,9 @@ int main(int argc, char* argv[]) {
 	} catch(IckyException* ie) {
 		cout << "Caught icky exception...\n";
 		cout << *ie << endl;
+	} catch(exception& e) {
+		cout << "Caught std::exception...\n";
+		cout << e.what() << endl;
 	}
 
 	return 0;

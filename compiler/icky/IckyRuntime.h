@@ -19,6 +19,8 @@ public:
 	}
 };
 
+// := $a = $a + $a ; // = 4 instructions and (5 + 1 + 1 + 1 + 5) = 13 bytes
+
 namespace IckyOpCode {
 	const uint8_t printString       = 0; // <0> <4-byte index into string table>
 	const uint8_t printDouble       = 1; // <1> <4-byte index into double table>
@@ -27,16 +29,32 @@ namespace IckyOpCode {
 	const uint8_t unconditionalJump = 4; // <4> <4-byte index into jump table>
 	const uint8_t loadDoubleVar     = 5; // <5> <4-byte src> <4-byte dest>
 
+	// a lot of instructions used to push data onto the working stack
+	// math operations have implicit operands
+	const uint8_t wsPushDouble = 6; // <6> <4-byte index into double table>
+	const uint8_t wsReverse    = 7; // reverse working stack to perform operations
+	const uint8_t wsClear      = 8;
+	const uint8_t wsSaveDouble = 9;
+	const uint8_t wsAdd        = 10;
+	const uint8_t wsSubtract   = 11;
+	const uint8_t wsMultiply   = 12;
+	const uint8_t wsDivide     = 13;
+	const uint8_t wsPower      = 14;
 } // end of namespace IckyOpCode
 
-union LargeRegister {
-	long i;
-	double f;
-};
+namespace IckyMathOperations {
+	const int add      = 0;
+	const int subtract = 1;
+	const int multiply = 2;
+	const int divide   = 3;
+}
 
 /*
 	This struct is responsible for holding all data 
 	associated with a given instance of an IckyVM
+
+	compiled code uses a hybrid register-stack
+	architecture
 */
 struct IckyRuntimeData {
 	// useful for the compiler. nothing more
@@ -56,8 +74,7 @@ struct IckyRuntimeData {
 	std::map<std::string, int> _jump_table_index;
 
 	// storage for immediate operands
-	LargeRegister aReg;
-	LargeRegister bReg;
+	std::vector<double> _working_stack;
 
 	// byte codes are placed here prior to being executed
 	std::vector<uint8_t> _asm_ops;

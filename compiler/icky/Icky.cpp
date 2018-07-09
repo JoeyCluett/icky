@@ -4,6 +4,7 @@
 #include <SimpleDatabase.hpp>
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 void IckyAsm::compile(IckyRuntimeData* ird, std::string filename) {
 
@@ -21,6 +22,7 @@ void IckyAsm::compile(IckyRuntimeData* ird, std::string filename) {
 	const int STATE_label    = 2;
 	const int STATE_goto     = 3;
 	const int STATE_variable = 4;
+	const int STATE_math     = 5;
 	int current_state = STATE_default;
 
 	const int VARIABLE_var_name = 0;
@@ -29,12 +31,18 @@ void IckyAsm::compile(IckyRuntimeData* ird, std::string filename) {
 	const int VARIABLE_end      = 3;
 	int current_variable_state = VARIABLE_var_name;
 
+	const int MATH_dest     = 0;
+	const int MATH_equ      = 1;
+	const int MATH_operand  = 2;
+	const int MATH_operator = 3;
+	int current_math_state = MATH_dest;
+
 	int str_vec_size = str_vec->size();
 	for(int k = 0; k < str_vec_size; k++) {
 		std::string str = str_vec->at(k); // bounds checking with at()
 		
 		// lets see the string
-		//std::cout << str << std::endl;
+		if(ird->verbose) std::cout << str << " : ";
 
 		// the main compilation loop
 		switch(current_state) {
@@ -51,6 +59,11 @@ void IckyAsm::compile(IckyRuntimeData* ird, std::string filename) {
 
 				} else if(str == IckyKeyword::VARIABLE || str == ">>") { // >> varname = value ;
 					current_state = STATE_variable;
+
+				} else if(str == IckyKeyword::MATH || str == ":=") {
+					current_state = STATE_math;
+				} else {
+					throw new IckyException(std::string("Unknown token: ") + str);
 				}
 				break;
 
@@ -157,7 +170,80 @@ void IckyAsm::compile(IckyRuntimeData* ird, std::string filename) {
 				}
 				break;
 
-			
+			case STATE_math:
+				if(ird->verbose) std::cout << "STATE_math\n";
+				static std::vector<std::string> _operation_vec;
+				static std::string _op_dest;
+
+				switch(current_math_state) {
+					case MATH_dest:
+						_op_dest = str;
+						current_math_state = MATH_equ;
+						break;
+					case MATH_equ:
+						if(str != IckyKeyword::EQU && str != "=") {
+							throw new IckyException("STATE_math:MATH_dest expecting EQU/=");
+							return;
+						} else {
+							current_math_state = MATH_operand;
+						}
+						break;
+					case MATH_operand:
+						if(str == IckyKeyword::END || str == ";") {
+							throw new IckyException("STATE_math:MATH_operand expecting operand, got END/;");
+						} else {
+							int data_index = -1;
+							if(str[0] == '$') {
+								data_index = IckyAsm::verify::_double(ird, &str[1]);
+							} else {
+								data_index = IckyAsm::put::_double(ird, std::stod(str));
+							}
+							IckyAsm::wsLoadDouble(ird, data_index);
+							current_math_state = MATH_operator;
+						}
+						break;
+					case MATH_operator:
+						if(str == IckyKeyword::END || str == ";") {
+							// end of math ops, generate asm
+							IckyAsm::wsReverse(ird);
+							for(auto& _op : _operation_vec) {
+								if(_op == "+") {
+									IckyAsm::wsAdd(ird);
+								} else if(_op == "-") {
+									IckyAsm::wsSubtract(ird);
+								} else if(_op == "*") {
+									IckyAsm::wsMultiply(ird);
+								} else if(_op == "/") {
+									IckyAsm::wsDivide(ird);
+								} else if(_op == "^") {
+									IckyAsm::wsPower(ird);
+								} else {
+									throw new IckyException("WTF! How did this happen!?");
+								}
+							}
+							IckyAsm::wsSaveDouble(ird, &_op_dest[1]);
+							IckyAsm::wsClear(ird);
+
+							// quick cleanup
+							_operation_vec.clear();
+							current_state = STATE_default;
+							current_math_state = MATH_dest;
+						} else {
+							if(str == "+" || str == "-" || str == "*" || str == "/") {
+								_operation_vec.push_back(str);
+							} else {
+								throw new IckyException(std::string(
+										"Unexpected operator in STATE_math:MATH_operator: ") + str);
+								return;
+							}
+							current_math_state = MATH_operand;
+						}
+						break;
+					default:
+						throw new IckyException("Unknown substate in STATE_math");
+						return;
+				}
+				break;
 
 			default:
 				throw new IckyException("Unknown STATE_ in compilation stage of IckyAsm::execute");
@@ -212,6 +298,42 @@ void IckyAsm::execute(IckyRuntimeData* ird) {
 				ird->_std_var_double[*(int*)&ird->_asm_ops[IP + 1]] 
 						= ird->_std_var_double[*(int*)&ird->_asm_ops[IP + 5]];
 				IP += 9;
+				break;
+			case IckyOpCode::wsPushDouble:
+				ird->_working_stack.push_back(ird->_std_var_double[*(int*)&ird->_asm_ops[IP+1]]);
+				IP += 5;
+				break;
+			case IckyOpCode::wsReverse:
+				std::reverse(std::begin(ird->_working_stack), std::end(ird->_working_stack));
+				IP++;
+				break;
+			case IckyOpCode::wsClear:
+				ird->_working_stack.clear();
+				IP++;
+				break;
+			case IckyOpCode::wsSaveDouble:
+				ird->_std_var_double[*(int*)&ird->_asm_ops[IP+1]] = ird->_working_stack[0];
+				IP += 5;
+				break;
+			case IckyOpCode::wsAdd:
+				{
+					double tmp = ird->_working_stack.back() + *(ird->_working_stack.end()-2);
+					ird->_working_stack.pop_back();
+					ird->_working_stack.back() = tmp;
+					IP++;
+				}
+				break;
+			case IckyOpCode::wsSubtract:
+				
+				break;
+			case IckyOpCode::wsMultiply:
+				
+				break;
+			case IckyOpCode::wsDivide:
+
+				break;
+			case IckyOpCode::wsPower:
+
 				break;
 			default:
 				throw new IckyException(std::string("Unknown opcode: ") + std::to_string((int)opcode));

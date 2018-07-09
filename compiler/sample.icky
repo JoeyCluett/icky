@@ -1,5 +1,5 @@
->> NEW_VARIABLE = $__pi ;
-< VARIABLE: $NEW_VARIABLE \n ;
-
-// !> NEW_INT_VAR = 0 ;
-// < NEW_INT_VAR !NEW_INT_VAR \n ;
+>> NEW_VARIABLE = 0 ;
+:: top
+    := $NEW_VARIABLE = $NEW_VARIABLE + 1 ;
+    < $NEW_VARIABLE \n ;
+GOTO top

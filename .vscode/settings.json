@@ -1,5 +1,8 @@
 {
     "files.associations": {
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "initializer_list": "cpp",
+        "deque": "cpp",
+        "vector": "cpp"
     }
 }

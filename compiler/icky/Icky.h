@@ -77,6 +77,19 @@ namespace IckyAsm {
 	void printCharacterLiteral(IckyRuntimeData* ird, char c);         // <0x03>
 	void unconditionalJump(IckyRuntimeData* ird, std::string dest);   // <0x04>
 	void loadDoubleFromLiteral(IckyRuntimeData* ird, std::string dest, int src); // <5>
+	
+	// working stack instructions
+	void wsLoadDouble(IckyRuntimeData* ird, int src);          // <6>
+	void wsReverse(IckyRuntimeData* ird);                      // <7>
+	void wsClear(IckyRuntimeData* ird);                        // <8>
+	void wsSaveDouble(IckyRuntimeData* ird, std::string dest); // <9>
+
+	// working stack arithmetic
+	void wsAdd(IckyRuntimeData* ird);      // <10>
+	void wsSubtract(IckyRuntimeData* ird); // <11>
+	void wsMultiply(IckyRuntimeData* ird); // <12>
+	void wsDivide(IckyRuntimeData* ird);   // <13>
+	void wsPower(IckyRuntimeData* ird);    // <14>
 
 } // end of namespace Icky
 
