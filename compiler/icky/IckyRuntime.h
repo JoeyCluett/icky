@@ -42,13 +42,6 @@ namespace IckyOpCode {
 	const uint8_t wsPower      = 14;
 } // end of namespace IckyOpCode
 
-namespace IckyMathOperations {
-	const int add      = 0;
-	const int subtract = 1;
-	const int multiply = 2;
-	const int divide   = 3;
-}
-
 /*
 	This struct is responsible for holding all data 
 	associated with a given instance of an IckyVM
