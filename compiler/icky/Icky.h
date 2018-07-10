@@ -70,12 +70,12 @@ namespace IckyAsm {
 	/*
 		Print assembler functions, generate op codes (0, 1, 2) <integer index>
 	*/
-	void printString(IckyRuntimeData* ird,  std::string name);        // <0x00>
-	void printDouble(IckyRuntimeData* ird,  std::string name);        // <0x01>
-	void printInteger(IckyRuntimeData* ird, std::string name);        // <0x02>
-	void printStringLiteral(IckyRuntimeData* ird, std::string value); // <0x00> string is put in the runtime when this function is called
-	void printCharacterLiteral(IckyRuntimeData* ird, char c);         // <0x03>
-	void unconditionalJump(IckyRuntimeData* ird, std::string dest);   // <0x04>
+	void printString(IckyRuntimeData* ird,  std::string name);        // <0>
+	void printDouble(IckyRuntimeData* ird,  std::string name);        // <1>
+	void printInteger(IckyRuntimeData* ird, std::string name);        // <2>
+	void printStringLiteral(IckyRuntimeData* ird, std::string value); // <0> string is put in the runtime when this function is called
+	void printCharacterLiteral(IckyRuntimeData* ird, char c);         // <3>
+	void unconditionalJump(IckyRuntimeData* ird, std::string dest);   // <4>
 	void loadDoubleFromLiteral(IckyRuntimeData* ird, std::string dest, int src); // <5>
 	
 	// working stack instructions
@@ -90,6 +90,12 @@ namespace IckyAsm {
 	void wsMultiply(IckyRuntimeData* ird); // <12>
 	void wsDivide(IckyRuntimeData* ird);   // <13>
 	void wsPower(IckyRuntimeData* ird);    // <14>
+
+	void bGreaterThan(IckyRuntimeData* ird,   int true_dest); // <15>
+	void bLessThan(IckyRuntimeData* ird,      int true_dest); // <16>
+	void bGreaterThanEq(IckyRuntimeData* ird, int true_dest); // <17>
+	void bLessThanEq(IckyRuntimeData* ird,    int true_dest); // <18>
+	void bEq(IckyRuntimeData* ird,            int true_dest); // <19>
 
 } // end of namespace Icky
 

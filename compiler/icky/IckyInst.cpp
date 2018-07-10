@@ -123,3 +123,38 @@ void IckyAsm::wsPower(IckyRuntimeData* ird) {
 	ird->_asm_ops.push_back(IckyOpCode::wsPower);
 	ird->_instruction_size++;
 }
+
+void IckyAsm::bGreaterThan(IckyRuntimeData* ird, int true_dest) {
+	ird->_asm_ops.push_back(IckyOpCode::bGreaterThan);
+	for(int i = 0; i < 4; i++)
+		ird->_asm_ops.push_back((true_dest >> (8*i)) & 0xFF);
+	ird->_instruction_size++;
+}
+
+void IckyAsm::bLessThan(IckyRuntimeData* ird, int true_dest) {
+	ird->_asm_ops.push_back(IckyOpCode::bLessThan);
+	for(int i = 0; i < 4; i++)
+		ird->_asm_ops.push_back((true_dest >> (8*i)) & 0xFF);
+	ird->_instruction_size++;
+}
+
+void IckyAsm::bGreaterThanEq(IckyRuntimeData* ird, int true_dest) {
+	ird->_asm_ops.push_back(IckyOpCode::bGreaterThanEq);
+	for(int i = 0; i < 4; i++)
+		ird->_asm_ops.push_back((true_dest >> (8*i)) & 0xFF);
+	ird->_instruction_size++;
+}
+
+void IckyAsm::bLessThanEq(IckyRuntimeData* ird, int true_dest) {
+	ird->_asm_ops.push_back(IckyOpCode::bLessThanEq);
+	for(int i = 0; i < 4; i++)
+		ird->_asm_ops.push_back((true_dest >> (8*i)) & 0xFF);
+	ird->_instruction_size++;
+}
+
+void IckyAsm::bEq(IckyRuntimeData* ird, int true_dest) {
+	ird->_asm_ops.push_back(IckyOpCode::bEq);
+	for(int i = 0; i < 4; i++)
+		ird->_asm_ops.push_back((true_dest >> (8*i)) & 0xFF);
+	ird->_instruction_size++;
+}

@@ -23,6 +23,7 @@ void IckyAsm::compile(IckyRuntimeData* ird, std::string filename) {
 	const int STATE_goto     = 3;
 	const int STATE_variable = 4;
 	const int STATE_math     = 5;
+	const int STATE_branch   = 6;
 	int current_state = STATE_default;
 
 	const int VARIABLE_var_name = 0;
@@ -36,6 +37,14 @@ void IckyAsm::compile(IckyRuntimeData* ird, std::string filename) {
 	const int MATH_operand  = 2;
 	const int MATH_operator = 3;
 	int current_math_state = MATH_dest;
+
+	const int BRANCH_dest = 0;
+	const int BRANCH_if   = 1;
+	const int BRANCH_lhs  = 2;
+	const int BRANCH_comp = 3;
+	const int BRANCH_rhs  = 4;
+	const int BRANCH_end  = 5;
+	int current_branch_state = BRANCH_dest;
 
 	int str_vec_size = str_vec->size();
 	for(int k = 0; k < str_vec_size; k++) {
@@ -62,6 +71,10 @@ void IckyAsm::compile(IckyRuntimeData* ird, std::string filename) {
 
 				} else if(str == IckyKeyword::MATH || str == ":=") {
 					current_state = STATE_math;
+
+				} else if(str == IckyKeyword::BRANCH || str == ".") {
+					current_state = STATE_branch;
+
 				} else {
 					throw new IckyException(std::string("Unknown token: ") + str);
 				}
@@ -218,7 +231,7 @@ void IckyAsm::compile(IckyRuntimeData* ird, std::string filename) {
 								} else if(_op == "^") {
 									IckyAsm::wsPower(ird);
 								} else {
-									throw new IckyException("WTF! How did this happen!?");
+									throw new IckyException("STATE_math:MATH_operator - WTF! How did this happen!?");
 								}
 							}
 							IckyAsm::wsSaveDouble(ird, &_op_dest[1]);
@@ -227,9 +240,9 @@ void IckyAsm::compile(IckyRuntimeData* ird, std::string filename) {
 							// quick cleanup
 							_operation_vec.clear();
 							current_state = STATE_default;
-							current_math_state = MATH_dest;
+							current_math_state = MATH_dest; // BACK TO NORMAL
 						} else {
-							if(str == "+" || str == "-" || str == "*" || str == "/") {
+							if(str == "+" || str == "-" || str == "*" || str == "/" || str == "^") {
 								_operation_vec.push_back(str);
 							} else {
 								throw new IckyException(std::string(
@@ -241,6 +254,92 @@ void IckyAsm::compile(IckyRuntimeData* ird, std::string filename) {
 						break;
 					default:
 						throw new IckyException("Unknown substate in STATE_math");
+						return;
+				}
+				break;
+
+			case STATE_branch:
+				static std::string branch_dest = "";
+				static std::string branch_lhs  = ""; //
+				static std::string branch_comp = "";
+				static std::string branch_rhs  = ""; //
+
+				switch(current_branch_state) {
+					case BRANCH_dest:
+						branch_dest = str;
+						current_branch_state = BRANCH_if;
+						break;
+					case BRANCH_if:
+						if(str != IckyKeyword::IF && str != ":") {
+							throw new IckyException("STATE_branch:BRANCH_if expecting ('IF'|':')");
+							return;
+						} else {
+							current_branch_state = BRANCH_lhs;
+							break;
+						}
+					case BRANCH_lhs:
+						branch_lhs = str;
+						current_branch_state = BRANCH_comp;
+						break;
+					case BRANCH_comp:
+						if(str == "<" || str == ">" || str == "<=" || str == ">=" || str == "==") {
+							branch_comp = str;
+							current_branch_state = BRANCH_rhs;
+							break;
+						} else {
+							throw new IckyException("STATE_branch:BRANCH_comp expecting ('<'|'>'|'<='|'>='|'==')");
+							return;
+						}
+					case BRANCH_rhs:
+						branch_rhs = str;
+						current_branch_state = BRANCH_end;
+						break;
+					case BRANCH_end:
+						{
+							int data_index = -1;
+
+							// generate code for left hand operand
+							if(branch_lhs[0] == '$') {
+								data_index = IckyAsm::verify::_double(ird, &branch_lhs[1]);
+							} else { // double literal
+								data_index = IckyAsm::put::_double(ird, std::stod(branch_lhs));
+							}
+							IckyAsm::wsLoadDouble(ird, data_index);
+
+							// generate code for right hand operand
+							if(branch_rhs[0] == '$') {
+								data_index = IckyAsm::verify::_double(ird, &branch_rhs[1]);
+							} else { // double literal
+								data_index = IckyAsm::put::_double(ird, std::stod(branch_rhs));
+							}
+							IckyAsm::wsLoadDouble(ird, data_index);
+
+							// index_table index for jump destination
+							data_index = IckyAsm::verify::_jumpDest(ird, branch_dest);
+
+							// generate branch code
+							if(branch_comp == "<") {
+								IckyAsm::bLessThan(ird, data_index);
+							} else if(branch_comp == ">") {
+								IckyAsm::bGreaterThan(ird, data_index);
+							} else if(branch_comp == "<=") {
+								IckyAsm::bLessThanEq(ird, data_index);
+							} else if(branch_comp == ">=") {
+								IckyAsm::bGreaterThanEq(ird, data_index);
+							} else if(branch_comp == "==") {
+								IckyAsm::bEq(ird, data_index);
+							} else {
+								throw new IckyException("STATE_branch:BRANCH_end. This shouldn't have happened");
+								return;
+							}
+
+							// cleanup
+							current_state = STATE_default;
+							current_branch_state = BRANCH_dest;
+						}
+						break;
+					default:
+						throw new IckyException("STATE_branch unknown substate...");
 						return;
 				}
 				break;
@@ -324,16 +423,56 @@ void IckyAsm::execute(IckyRuntimeData* ird) {
 				}
 				break;
 			case IckyOpCode::wsSubtract:
-				
+				IP++;
 				break;
 			case IckyOpCode::wsMultiply:
-				
+				IP++;
 				break;
 			case IckyOpCode::wsDivide:
-
+				IP++;
 				break;
 			case IckyOpCode::wsPower:
-
+				IP++;
+				break;
+			case IckyOpCode::bGreaterThan:
+				if(ird->_working_stack[0] > ird->_working_stack[1]) {
+					IP = ird->_jump_table[*(int*)&ird->_asm_ops[IP+1]];
+				} else {
+					IP += 5;
+				}
+				ird->_working_stack.clear();
+				break;
+			case IckyOpCode::bLessThan:
+				if(ird->_working_stack[0] < ird->_working_stack[1]) {
+					IP = ird->_jump_table[*(int*)&ird->_asm_ops[IP+1]];
+				} else {
+					IP += 5;
+				}
+				ird->_working_stack.clear();
+				break;
+			case IckyOpCode::bGreaterThanEq:
+				if(ird->_working_stack[0] >= ird->_working_stack[1]) {
+					IP = ird->_jump_table[*(int*)&ird->_asm_ops[IP+1]];
+				} else {
+					IP += 5;
+				}
+				ird->_working_stack.clear();
+				break;
+			case IckyOpCode::bLessThanEq:
+				if(ird->_working_stack[0] <= ird->_working_stack[1]) {
+					IP = ird->_jump_table[*(int*)&ird->_asm_ops[IP+1]];
+				} else {
+					IP += 5;
+				}
+				ird->_working_stack.clear();
+				break;
+			case IckyOpCode::bEq:
+				if(ird->_working_stack[0] == ird->_working_stack[1]) {
+					IP = ird->_jump_table[*(int*)&ird->_asm_ops[IP+1]];
+				} else {
+					IP += 5;
+				}
+				ird->_working_stack.clear();
 				break;
 			default:
 				throw new IckyException(std::string("Unknown opcode: ") + std::to_string((int)opcode));

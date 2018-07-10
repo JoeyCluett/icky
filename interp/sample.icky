@@ -3,4 +3,4 @@
     := $NEW_VARIABLE = $NEW_VARIABLE + 1 ;
     < $NEW_VARIABLE \n ;
 BRANCH top IF $NEW_VARIABLE < 1000000 ;
-//-r ;
+-r ;

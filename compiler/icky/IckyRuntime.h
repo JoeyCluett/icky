@@ -40,6 +40,14 @@ namespace IckyOpCode {
 	const uint8_t wsMultiply   = 12;
 	const uint8_t wsDivide     = 13;
 	const uint8_t wsPower      = 14;
+
+	// conditional jumps are needed for turing completeness
+	const uint8_t bGreaterThan   = 15;
+	const uint8_t bLessThan      = 16;
+	const uint8_t bGreaterThanEq = 17;
+	const uint8_t bLessThanEq	 = 18;
+	const uint8_t bEq            = 19;
+
 } // end of namespace IckyOpCode
 
 /*
@@ -50,6 +58,11 @@ namespace IckyOpCode {
 	architecture
 */
 struct IckyRuntimeData {
+	// byte codes are placed here prior to being executed
+	std::vector<uint8_t> _asm_ops;
+	int _instruction_ptr = 0;
+	int _instruction_size = 0; // incremented as individual instructions are added
+	
 	// useful for the compiler. nothing more
 	bool verbose = false;
 
@@ -68,11 +81,6 @@ struct IckyRuntimeData {
 
 	// storage for immediate operands
 	std::vector<double> _working_stack;
-
-	// byte codes are placed here prior to being executed
-	std::vector<uint8_t> _asm_ops;
-	int _instruction_ptr = 0;
-	int _instruction_size = 0; // incremented as individual instructions are added
 };
 
 #endif // __JJC__ICKY__RUNTIME__H__
