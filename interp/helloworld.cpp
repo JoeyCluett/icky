@@ -27,4 +27,3 @@ static IcImportFunction arr[] {
 extern "C" IcImportFunction* get_ic_functions(void) {
 	return arr;
 }
-

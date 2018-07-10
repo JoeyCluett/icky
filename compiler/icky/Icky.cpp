@@ -365,7 +365,15 @@ void IckyAsm::compile(IckyRuntimeData* ird, std::string filename) {
 				break;
 
 			case STATE_wait: // ill get around to it
-
+				if(str != IckyKeyword::END && str != ";") {
+					throw new IckyException("STATE_wait. Expecting ('END'|';')");
+					return;
+				} else {
+					IckyAsm::sysWait(ird);
+					current_state = STATE_default;
+				}
+				break;
+				
 			case STATE_quit:
 				if(str != IckyKeyword::END && str != ";") {
 					throw new IckyException("STATE_quit. Expecting ('END'|';')");
