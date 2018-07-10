@@ -91,11 +91,17 @@ namespace IckyAsm {
 	void wsDivide(IckyRuntimeData* ird);   // <13>
 	void wsPower(IckyRuntimeData* ird);    // <14>
 
+	// branching
 	void bGreaterThan(IckyRuntimeData* ird,   int true_dest); // <15>
 	void bLessThan(IckyRuntimeData* ird,      int true_dest); // <16>
 	void bGreaterThanEq(IckyRuntimeData* ird, int true_dest); // <17>
 	void bLessThanEq(IckyRuntimeData* ird,    int true_dest); // <18>
 	void bEq(IckyRuntimeData* ird,            int true_dest); // <19>
+
+	// syscalls
+	void sysRuntime(IckyRuntimeData* ird); // <20>
+	void sysWait(IckyRuntimeData* ird);    // <21>
+	void sysQuit(IckyRuntimeData* ird);    // <22>
 
 } // end of namespace Icky
 

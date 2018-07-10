@@ -3,6 +3,8 @@
         "sstream": "cpp",
         "initializer_list": "cpp",
         "deque": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "array": "cpp",
+        "list": "cpp"
     }
 }

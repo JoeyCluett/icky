@@ -158,3 +158,18 @@ void IckyAsm::bEq(IckyRuntimeData* ird, int true_dest) {
 		ird->_asm_ops.push_back((true_dest >> (8*i)) & 0xFF);
 	ird->_instruction_size++;
 }
+
+void IckyAsm::sysRuntime(IckyRuntimeData* ird) {
+	ird->_asm_ops.push_back(IckyOpCode::sysRuntime);
+	ird->_instruction_size++;
+}
+
+void IckyAsm::sysWait(IckyRuntimeData* ird) {
+	ird->_asm_ops.push_back(IckyOpCode::sysWait);
+	ird->_instruction_size++;
+}
+
+void IckyAsm::sysQuit(IckyRuntimeData* ird) {
+	ird->_asm_ops.push_back(IckyOpCode::sysQuit);
+	ird->_instruction_size++;
+}

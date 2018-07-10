@@ -1,6 +1,15 @@
+GOTO bottom
 >> NEW_VARIABLE = 0 ;
 :: top
     := $NEW_VARIABLE = $NEW_VARIABLE + 1 ;
-    < $NEW_VARIABLE \n ;
+    //< $NEW_VARIABLE \n ;
 BRANCH top IF $NEW_VARIABLE < 1000000 ;
-//-r ;
+-r ;
+-q ;
+
+// find the square root of pi
+:: bottom
+>> PI = $__pi ;
+:= $PI = $PI ^ 0.5 ;
+< PI: $PI \n ;
+-q ;

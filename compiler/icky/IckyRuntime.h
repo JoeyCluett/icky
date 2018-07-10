@@ -48,6 +48,11 @@ namespace IckyOpCode {
 	const uint8_t bLessThanEq	 = 18;
 	const uint8_t bEq            = 19;
 
+	// syscalls for timestamp, wait
+	const uint8_t sysRuntime = 20;
+	const uint8_t sysWait    = 21;
+	const uint8_t sysQuit    = 22;
+
 } // end of namespace IckyOpCode
 
 /*
@@ -81,6 +86,9 @@ struct IckyRuntimeData {
 
 	// storage for immediate operands
 	std::vector<double> _working_stack;
+
+	// timestamp for start time
+	unsigned long _start_time = 0;
 };
 
 #endif // __JJC__ICKY__RUNTIME__H__

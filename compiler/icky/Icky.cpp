@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <algorithm>
+#include "../../interp/conio.h"
 
 void IckyAsm::compile(IckyRuntimeData* ird, std::string filename) {
 
@@ -24,6 +25,9 @@ void IckyAsm::compile(IckyRuntimeData* ird, std::string filename) {
 	const int STATE_variable = 4;
 	const int STATE_math     = 5;
 	const int STATE_branch   = 6;
+	const int STATE_runtime  = 7;
+	const int STATE_wait     = 8;
+	const int STATE_quit     = 9;
 	int current_state = STATE_default;
 
 	const int VARIABLE_var_name = 0;
@@ -74,6 +78,12 @@ void IckyAsm::compile(IckyRuntimeData* ird, std::string filename) {
 
 				} else if(str == IckyKeyword::BRANCH || str == ".") {
 					current_state = STATE_branch;
+
+				} else if(str == IckyKeyword::RUNTIME || str == "-r") {
+					current_state = STATE_runtime;
+
+				} else if(str == IckyKeyword::QUIT || str == "-q") {
+					current_state = STATE_quit;
 
 				} else {
 					throw new IckyException(std::string("Unknown token: ") + str);
@@ -344,6 +354,28 @@ void IckyAsm::compile(IckyRuntimeData* ird, std::string filename) {
 				}
 				break;
 
+			case STATE_runtime:
+				if(str != IckyKeyword::END && str != ";") {
+					throw new IckyException("STATE_runtime. Expecting ('END'|';')");
+					return;
+				} else {
+					IckyAsm::sysRuntime(ird);
+					current_state = STATE_default;
+				}
+				break;
+
+			case STATE_wait: // ill get around to it
+
+			case STATE_quit:
+				if(str != IckyKeyword::END && str != ";") {
+					throw new IckyException("STATE_quit. Expecting ('END'|';')");
+					return;
+				} else {
+					IckyAsm::sysQuit(ird);
+					current_state = STATE_default;
+				}
+				break;
+
 			default:
 				throw new IckyException("Unknown STATE_ in compilation stage of IckyAsm::execute");
 				break;
@@ -368,6 +400,7 @@ int IckyAsm::runtimeSize(IckyRuntimeData* ird) {
 
 void IckyAsm::execute(IckyRuntimeData* ird) {
 	int& IP = ird->_instruction_ptr; // just a shorter way to use
+	ird->_start_time = getUsecTimestamp();
 
 	for(;;) {
 		////uint8_t opcode = ird->_asm_ops[IP]; // avoid the bounds check for a lil speed boost
@@ -423,16 +456,36 @@ void IckyAsm::execute(IckyRuntimeData* ird) {
 				}
 				break;
 			case IckyOpCode::wsSubtract:
-				IP++;
+				{
+					double tmp = ird->_working_stack.back() - *(ird->_working_stack.end()-2);
+					ird->_working_stack.pop_back();
+					ird->_working_stack.back() = tmp;
+					IP++;
+				}
 				break;
 			case IckyOpCode::wsMultiply:
-				IP++;
+				{
+					double tmp = ird->_working_stack.back() * *(ird->_working_stack.end()-2);
+					ird->_working_stack.pop_back();
+					ird->_working_stack.back() = tmp;
+					IP++;
+				}
 				break;
 			case IckyOpCode::wsDivide:
-				IP++;
+				{
+					double tmp = ird->_working_stack.back() / *(ird->_working_stack.end()-2);
+					ird->_working_stack.pop_back();
+					ird->_working_stack.back() = tmp;
+					IP++;
+				}
 				break;
 			case IckyOpCode::wsPower:
-				IP++;
+				{
+					double tmp = std::pow(ird->_working_stack.back(), *(ird->_working_stack.end()-2));
+					ird->_working_stack.pop_back();
+					ird->_working_stack.back() = tmp;
+					IP++;
+				}
 				break;
 			case IckyOpCode::bGreaterThan:
 				if(ird->_working_stack[0] > ird->_working_stack[1]) {
@@ -473,6 +526,21 @@ void IckyAsm::execute(IckyRuntimeData* ird) {
 					IP += 5;
 				}
 				ird->_working_stack.clear();
+				break;
+			case IckyOpCode::sysRuntime:
+				std::cout << "    Current runtime: " 
+						<< double(getUsecTimestamp() - ird->_start_time)/1000000.0 
+						<< " seconds...\n";
+				IP++;
+				break;
+			case IckyOpCode::sysWait:
+				getch();
+				IP++;
+				break;
+			case IckyOpCode::sysQuit:
+				IP = 0;
+				std::cout << "    Quitting...\n";
+				return;
 				break;
 			default:
 				throw new IckyException(std::string("Unknown opcode: ") + std::to_string((int)opcode));
