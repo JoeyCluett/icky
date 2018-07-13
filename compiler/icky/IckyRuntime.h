@@ -42,13 +42,13 @@ namespace IckyOpCode {
 	const uint8_t wsPower      = 14;
 
 	// conditional jumps are needed for turing completeness
-	const uint8_t bGreaterThan   = 15;
-	const uint8_t bLessThan      = 16;
-	const uint8_t bGreaterThanEq = 17;
-	const uint8_t bLessThanEq	 = 18;
-	const uint8_t bEq            = 19;
+	const uint8_t bGreaterThan   = 15; // <15> <4-byte index into jump table>
+	const uint8_t bLessThan      = 16; // <16> <4-byte index into jump table>
+	const uint8_t bGreaterThanEq = 17; // <17> <4-byte index into jump table>
+	const uint8_t bLessThanEq	 = 18; // <18> <4-byte index into jump table>
+	const uint8_t bEq            = 19; // <19> <4-byte index into jump table>
 
-	// syscalls for timestamp, wait
+	// syscalls for timestamp, wait, quit
 	const uint8_t sysRuntime = 20;
 	const uint8_t sysWait    = 21;
 	const uint8_t sysQuit    = 22;
@@ -64,12 +64,12 @@ namespace IckyOpCode {
 */
 struct IckyRuntimeData {
 	// byte codes are placed here prior to being executed
-	std::vector<uint8_t> _asm_ops;
 	int _instruction_ptr = 0;
 	int _instruction_size = 0; // incremented as individual instructions are added
-	
-	// useful for the compiler. nothing more
-	bool verbose = false;
+	std::vector<uint8_t> _asm_ops;
+
+	// storage for immediate operands
+	std::vector<double> _working_stack;
 
 	// variable raw data storage
 	std::vector<double> _std_var_double;
@@ -84,11 +84,11 @@ struct IckyRuntimeData {
 	std::vector<int> _jump_table; // this is checked after compilation run, to verify all entries have been filled
 	std::map<std::string, int> _jump_table_index;
 
-	// storage for immediate operands
-	std::vector<double> _working_stack;
-
 	// timestamp for start time
 	unsigned long _start_time = 0;
+
+	// useful for the compiler. nothing more
+	bool verbose = false;
 };
 
 #endif // __JJC__ICKY__RUNTIME__H__

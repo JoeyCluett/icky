@@ -556,11 +556,3 @@ void IckyAsm::execute(IckyRuntimeData* ird) {
 		}
 	}
 }
-
-/*
-void IckyAsm::dasm(IckyRuntimeData* ird) {
-	for(uint8_t ui : ird->_asm_ops) {
-		
-	}
-}
-*/
