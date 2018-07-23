@@ -19,7 +19,11 @@ int main(int argc, char* argv[]) {
 		//cout << "Runtime size: " << s << endl;
 		//cout << "Running compiled program\n";
 
-		IckyAsm::execute(ird);
+		cout << "Dasm: " << endl;
+		IckyAsm::dasm(ird);
+
+		cout << "Execute: " << endl;
+		//IckyAsm::execute(ird);
 	
 	} catch(IckyException* ie) {
 		cout << "Caught icky exception...\n";
