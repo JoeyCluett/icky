@@ -31,7 +31,7 @@ static void printHex(int input, int hex_str_size = HEX_NUM_SIZE) {
         input >>= 4;
     }
 
-    while(_tmp.size() < (hex_str_size+1))
+    while(_tmp.size() < (unsigned int)(hex_str_size+1))
         _tmp.push_back('0');
     std::reverse(std::begin(_tmp), std::end(_tmp));
     std::cout << &_tmp[0];
@@ -139,9 +139,10 @@ void IckyAsm::dasm(IckyRuntimeData* ird) {
                 i += 5; 
                 break;
             case IckyOpCode::printInteger:
-                std::cout << "["
-                        << *(int*)&ird->_asm_ops[i+1] << ":"
-                        << ird->_std_var_integer[*(int*)&ird->_asm_ops[i+1]] << "]";
+                //std::cout << "["
+                //        << *(int*)&ird->_asm_ops[i+1] << ":"
+                //        << ird->_std_var_integer[*(int*)&ird->_asm_ops[i+1]] << "]";
+                throw new IckyException("IckyOpCode::printInteger, this opcode does not exist");
                 i += 5; 
                 break;
             case IckyOpCode::printCharacter:

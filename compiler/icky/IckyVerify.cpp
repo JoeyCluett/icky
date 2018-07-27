@@ -30,7 +30,7 @@ int IckyAsm::verify::_double(IckyRuntimeData* ird, std::string name) {
 		return ird->_std_var_double_index[name];
 	}
 }
-
+/*
 int IckyAsm::verify::_integer(IckyRuntimeData* ird, std::string name) {
 	if(ird->_std_var_integer_index.find(name) == ird->_std_var_integer_index.end()) {
 		std::string except = "Integer [";
@@ -40,7 +40,7 @@ int IckyAsm::verify::_integer(IckyRuntimeData* ird, std::string name) {
 		return ird->_std_var_integer_index[name];
 	}
 }
-
+*/
 int IckyAsm::verify::_jumpDest(IckyRuntimeData* ird, std::string name) {
 	if(ird->_jump_table_index.find(name) == ird->_jump_table_index.end()) {
 		std::string except = "Jump destination [";

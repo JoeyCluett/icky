@@ -35,7 +35,7 @@ int IckyAsm::put::_double(IckyRuntimeData* ird, std::string name, double value) 
 	ird->_std_var_double_index[name] = index;
 	return index;
 }
-
+/*
 int IckyAsm::put::_integer(IckyRuntimeData* ird, std::string name, long value) {
 	if(ird->_std_var_integer_index.find(name) 
 			!= ird->_std_var_integer_index.end())
@@ -46,7 +46,7 @@ int IckyAsm::put::_integer(IckyRuntimeData* ird, std::string name, long value) {
 	ird->_std_var_integer_index[name] = index;
 	return index;
 }
-
+*/
 int IckyAsm::put::_string(IckyRuntimeData* ird, std::string value) {
 	// this is important part
 	int index = ird->_std_var_string.size();
@@ -64,8 +64,10 @@ int IckyAsm::put::_double(IckyRuntimeData* ird, double value) {
 	return index;
 }
 
+/*
 int IckyAsm::put::_integer(IckyRuntimeData* ird, long value) {
 	int index = ird->_std_var_integer.size();
 	ird->_std_var_integer.push_back(value);
 	return index;
 }
+*/

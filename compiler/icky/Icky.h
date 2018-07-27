@@ -8,8 +8,7 @@
 	Most of the functions here are responsible for assembling
 	a given program into IcScript Bytecodes.
 	The IckyVM then executes these byte codes much faster 
-	than the previous version which was pretty fast for 
-	a string-based interpreter
+	than the previous string-based interpreter
 */
 namespace IckyAsm {
 
@@ -45,13 +44,11 @@ namespace IckyAsm {
 	*/
 	namespace put {
 		int _string(IckyRuntimeData* ird, std::string name, std::string value);
-		int _integer(IckyRuntimeData* ird, std::string name, long value);
 		int _double(IckyRuntimeData* ird, std::string name, double value);
 
 		// sometimes it is necessary to store data representing different constants without names
 		// no questions are asked about these variables
 		int _string(IckyRuntimeData* ird, std::string value);
-		int _integer(IckyRuntimeData* ird, long value);
 		int _double(IckyRuntimeData* ird, double value);
 	} // end of namespace put
 
@@ -62,7 +59,6 @@ namespace IckyAsm {
 	*/
 	namespace verify {
 		int _string(IckyRuntimeData* ird, std::string name);
-		int _integer(IckyRuntimeData* ird, std::string name);
 		int _double(IckyRuntimeData* ird, std::string name);
 		int _jumpDest(IckyRuntimeData* ird, std::string name);
 	} // end of namespace verify
@@ -72,7 +68,6 @@ namespace IckyAsm {
 	*/
 	void printString(IckyRuntimeData* ird,  std::string name);        // <0>
 	void printDouble(IckyRuntimeData* ird,  std::string name);        // <1>
-	void printInteger(IckyRuntimeData* ird, std::string name);        // <2>
 	void printStringLiteral(IckyRuntimeData* ird, std::string value); // <0> string is put in the runtime when this function is called
 	void printCharacterLiteral(IckyRuntimeData* ird, char c);         // <3>
 	void unconditionalJump(IckyRuntimeData* ird, std::string dest);   // <4>
@@ -97,11 +92,16 @@ namespace IckyAsm {
 	void bGreaterThanEq(IckyRuntimeData* ird, int true_dest); // <17>
 	void bLessThanEq(IckyRuntimeData* ird,    int true_dest); // <18>
 	void bEq(IckyRuntimeData* ird,            int true_dest); // <19>
+	void bNeq(IckyRuntimeData* ird,           int true_dest); // <20>
 
 	// syscalls
 	void sysRuntime(IckyRuntimeData* ird); // <20>
 	void sysWait(IckyRuntimeData* ird);    // <21>
 	void sysQuit(IckyRuntimeData* ird);    // <22>
+
+	// Save IckyRuntimeData to a file and read existing data back into runtime
+	void saveRuntimeData(IckyRuntimeData* ird, std::string filename);
+	void loadRuntimeData(IckyRuntimeData* ird, std::string filename);
 
 } // end of namespace Icky
 

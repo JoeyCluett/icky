@@ -33,7 +33,7 @@ namespace IckyKeyword {
 
 	// comparison operators
 	const std::string EQUALTO  = "-EQ";  // ==
-	const std::string NEQUALTO = "-NEQ"; // != 
+	const std::string NEQUALTO = "-NEQ"; // '!=' 
 	const std::string GREATER  = "-GT";  // >
 	const std::string LESSER   = "-LT";  // <
 	const std::string GTEQUAL  = "-GTE"; // >=

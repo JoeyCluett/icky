@@ -26,7 +26,7 @@ void IckyAsm::printDouble(IckyRuntimeData* ird, std::string name) { // <1>
 
 	ird->_instruction_size++;
 }
-
+/*
 void IckyAsm::printInteger(IckyRuntimeData* ird, std::string name) { // <2>
 	int int_index = IckyAsm::verify::_integer(ird, name);
 
@@ -36,7 +36,7 @@ void IckyAsm::printInteger(IckyRuntimeData* ird, std::string name) { // <2>
 
 	ird->_instruction_size++;
 }
-
+*/
 void IckyAsm::printStringLiteral(IckyRuntimeData* ird, std::string value) {
 	int str_index = IckyAsm::put::_string(ird, value);
 
@@ -154,6 +154,13 @@ void IckyAsm::bLessThanEq(IckyRuntimeData* ird, int true_dest) {
 
 void IckyAsm::bEq(IckyRuntimeData* ird, int true_dest) {
 	ird->_asm_ops.push_back(IckyOpCode::bEq);
+	for(int i = 0; i < 4; i++)
+		ird->_asm_ops.push_back((true_dest >> (8*i)) & 0xFF);
+	ird->_instruction_size++;
+}
+
+void IckyAsm::bNeq(IckyRuntimeData* ird, int true_dest) {
+	ird->_asm_ops.push_back(IckyOpCode::bNeq);
 	for(int i = 0; i < 4; i++)
 		ird->_asm_ops.push_back((true_dest >> (8*i)) & 0xFF);
 	ird->_instruction_size++;

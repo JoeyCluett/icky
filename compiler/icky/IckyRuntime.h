@@ -47,11 +47,12 @@ namespace IckyOpCode {
 	const uint8_t bGreaterThanEq = 17; // <17> <4-byte index into jump table>
 	const uint8_t bLessThanEq	 = 18; // <18> <4-byte index into jump table>
 	const uint8_t bEq            = 19; // <19> <4-byte index into jump table>
+	const uint8_t bNeq           = 20; // <20> <4-byte index into jump table>
 
 	// syscalls for timestamp, wait, quit
-	const uint8_t sysRuntime = 20;
-	const uint8_t sysWait    = 21;
-	const uint8_t sysQuit    = 22;
+	const uint8_t sysRuntime = 21;
+	const uint8_t sysWait    = 22;
+	const uint8_t sysQuit    = 23;
 
 } // end of namespace IckyOpCode
 
@@ -73,12 +74,10 @@ struct IckyRuntimeData {
 
 	// variable raw data storage
 	std::vector<double> _std_var_double;
-	std::vector<long>   _std_var_integer;
 	std::vector<char>   _std_var_string;
 
 	std::map<std::string, int> _std_var_double_index;
 	std::map<std::string, int> _std_var_string_index;
-	std::map<std::string, int> _std_var_integer_index;
 
 	// index tables for GOTOs, BRANCHes, CALLs, LABELs
 	std::vector<int> _jump_table; // this is checked after compilation run, to verify all entries have been filled

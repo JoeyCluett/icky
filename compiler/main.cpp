@@ -15,15 +15,21 @@ int main(int argc, char* argv[]) {
 		IckyAsm::compile(ird, "sample.icky");
 		cout << "Instruction size: " << ird->_instruction_size << endl;
 		cout << "Binary size:      " << ird->_asm_ops.size() << " bytes" << endl;
-		//int s = IckyAsm::runtimeSize(ird);
-		//cout << "Runtime size: " << s << endl;
-		//cout << "Running compiled program\n";
 
-		cout << "Dasm: " << endl;
+		cout << "Dasm: " << endl << "================================\n";
+		IckyAsm::dasm(ird);
+		IckyAsm::execute(ird);
+		IckyAsm::saveRuntimeData(ird, "bin/newfile.ickyasm");
+
+		// completely reset the runtime
+		delete ird;
+		ird = new IckyRuntimeData;
+
+		// and read it back from the file
+		IckyAsm::loadRuntimeData(ird, "bin/newfile.ickyasm");
 		IckyAsm::dasm(ird);
 
-		cout << "Execute: " << endl;
-		//IckyAsm::execute(ird);
+		IckyAsm::execute(ird);
 	
 	} catch(IckyException* ie) {
 		cout << "Caught icky exception...\n";
@@ -32,6 +38,8 @@ int main(int argc, char* argv[]) {
 		cout << "Caught std::exception...\n";
 		cout << e.what() << endl;
 	}
+
+	delete ird;
 
 	return 0;
 }

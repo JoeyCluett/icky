@@ -85,6 +85,9 @@ void IckyAsm::compile(IckyRuntimeData* ird, std::string filename) {
 				} else if(str == IckyKeyword::QUIT || str == "-q") {
 					current_state = STATE_quit;
 
+				} else if(str == IckyKeyword::WAIT || str == "-w") {
+					current_state = STATE_wait;
+
 				} else {
 					throw new IckyException(std::string("Unknown token: ") + str);
 				}
@@ -292,12 +295,13 @@ void IckyAsm::compile(IckyRuntimeData* ird, std::string filename) {
 						current_branch_state = BRANCH_comp;
 						break;
 					case BRANCH_comp:
-						if(str == "<" || str == ">" || str == "<=" || str == ">=" || str == "==") {
+						if(str == "<" || str == ">" || str == "<=" || str == ">=" || str == "==" || str == "!=") {
 							branch_comp = str;
 							current_branch_state = BRANCH_rhs;
 							break;
 						} else {
-							throw new IckyException("STATE_branch:BRANCH_comp expecting ('<'|'>'|'<='|'>='|'==')");
+							throw new IckyException(
+								"STATE_branch:BRANCH_comp expecting ('<'|'>'|'<='|'>='|'=='|'!=')");
 							return;
 						}
 					case BRANCH_rhs:
@@ -338,6 +342,8 @@ void IckyAsm::compile(IckyRuntimeData* ird, std::string filename) {
 								IckyAsm::bGreaterThanEq(ird, data_index);
 							} else if(branch_comp == "==") {
 								IckyAsm::bEq(ird, data_index);
+							} else if(branch_comp == "!=") {
+								IckyAsm::bNeq(ird, data_index);
 							} else {
 								throw new IckyException("STATE_branch:BRANCH_end. This shouldn't have happened");
 								return;
@@ -399,7 +405,7 @@ int IckyAsm::runtimeSize(IckyRuntimeData* ird) {
 
 	s += ird->_std_var_string.size();      // vector<char>
 	s += ird->_std_var_double.size() * 8;  // vector<double>
-	s += ird->_std_var_integer.size() * 8; // vector<long>
+	//s += ird->_std_var_integer.size() * 8; // vector<long>
 
 	//const int str_size = sizeof(std::string);
 
@@ -424,7 +430,8 @@ void IckyAsm::execute(IckyRuntimeData* ird) {
 				IP += 4;
 				break;
 			case IckyOpCode::printInteger:
-				std::cout << ird->_std_var_integer[*(int*)&ird->_asm_ops[++IP]] << ' ';
+				//std::cout << ird->_std_var_integer[*(int*)&ird->_asm_ops[++IP]] << ' ';
+				throw new IckyException("IckyOpCode::printInteger, this opcode does not exist");
 				IP += 4;
 				break;
 			case IckyOpCode::printCharacter:
@@ -432,7 +439,7 @@ void IckyAsm::execute(IckyRuntimeData* ird) {
 				IP++;
 				break;
 			case IckyOpCode::unconditionalJump:
-				IP = ird->_jump_table[*(int*)&ird->_asm_ops[++IP]];
+				IP = ird->_jump_table[*(int*)&ird->_asm_ops[IP + 1]];
 				break;
 			case IckyOpCode::loadDoubleVar:
 				ird->_std_var_double[*(int*)&ird->_asm_ops[IP + 1]] 
@@ -534,6 +541,8 @@ void IckyAsm::execute(IckyRuntimeData* ird) {
 					IP += 5;
 				}
 				ird->_working_stack.clear();
+				break;
+			case IckyOpCode::bNeq:
 				break;
 			case IckyOpCode::sysRuntime:
 				std::cout << "    Current runtime: " 
