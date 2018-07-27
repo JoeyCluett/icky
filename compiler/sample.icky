@@ -1,6 +1,7 @@
 >> NEW_VARIABLE = 0 ;
 :: top
     := $NEW_VARIABLE = $NEW_VARIABLE + 1 ;
-    < $NEW_VARIABLE \n ;
-BRANCH top IF $NEW_VARIABLE < 1000000 ;
--r ; -w ; -q ;
+    // < $NEW_VARIABLE \n ;
+BRANCH top IF $NEW_VARIABLE < 100000000 ;
+-r ; 
+-q ;

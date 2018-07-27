@@ -9,7 +9,7 @@ int main(int argc, char* argv[]) {
 
 	unsigned long start_time = getUsecTimestamp();
 
-	for(int i = 0; i < 1000000; i++) {
+	for(int i = 0; i < 100000000; i++) {
 		j = j + 1.0;//cout << i << endl;
 	}
 

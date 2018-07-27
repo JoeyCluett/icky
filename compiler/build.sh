@@ -7,3 +7,8 @@ g++ -c -o IckyFile.o   icky/IckyFile.cpp   -std=c++11 -march=native -O3 -Wall
 
 g++ -o main main.cpp Icky.o IckyInst.o IckyPut.o IckyVerify.o IckyDasm.o IckyFile.o \
 -ldl -march=native -std=c++11 -I../SimpleDatabase/ -O3 -Wall
+
+g++ -o ickyrt ickyrt.cpp Icky.o IckyInst.o IckyPut.o IckyVerify.o IckyDasm.o IckyFile.o \
+-ldl -march=native -std=c++11 -I../SimpleDatabase/ -O3 -Wall
+
+# the main icky application responsible for compiling, and running pre-compiled icky programs

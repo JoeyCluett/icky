@@ -10,7 +10,9 @@ int main(int argc, char* argv[]) {
 	IckyRuntimeData* ird = new IckyRuntimeData;
 	//ird->verbose = true;
 
-	try {
+	
+
+	/*try {
 
 		IckyAsm::compile(ird, "sample.icky");
 		cout << "Instruction size: " << ird->_instruction_size << endl;
@@ -37,7 +39,7 @@ int main(int argc, char* argv[]) {
 	} catch(exception& e) {
 		cout << "Caught std::exception...\n";
 		cout << e.what() << endl;
-	}
+	}*/
 
 	delete ird;
 
